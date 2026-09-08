@@ -7,7 +7,7 @@ const openai = new OpenAI({
 
 export async function generateLinkedInPost(topic) {
   const response = await openai.responses.create({
-    model: "gpt-5.6",
+    model: "gpt-5.6-luna",
     instructions: linkedinSystemPrompt,
     input: `
 Create a LinkedIn Company Page post for Syntronic Labs.
