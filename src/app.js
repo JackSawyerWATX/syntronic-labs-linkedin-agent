@@ -1,5 +1,6 @@
 import express from "express";
 import cors from "cors";
+import postsRouter from "./routes/posts.routes.js";
 
 const app = express();
 
@@ -19,5 +20,7 @@ app.get("/health", (req, res) => {
     timestamp: new Date().toISOString(),
   });
 });
+
+app.use("/api/posts", postsRouter);
 
 export default app;
