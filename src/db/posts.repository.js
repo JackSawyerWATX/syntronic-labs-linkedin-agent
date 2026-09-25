@@ -86,3 +86,31 @@ export function rejectPost(id) {
 
   return getPostById(id);
 }
+
+export function getRecentPosts(limit = 10) {
+  return db
+    .prepare(`
+      SELECT
+        id,
+        topic,
+        category,
+        content,
+        status,
+        created_at
+      FROM linkedin_posts
+      ORDER BY created_at DESC
+      LIMIT ?
+    `)
+    .all(limit);
+}
+
+export function getRejectedPostById(id) {
+  return db
+    .prepare(`
+      SELECT *
+      FROM linkedin_posts
+      WHERE id = ?
+        AND status = 'rejected'
+    `)
+    .get(id);
+}
