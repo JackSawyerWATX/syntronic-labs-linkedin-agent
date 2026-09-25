@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Syntronic Labs LinkedIn Agent</title>
+  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+
+<body>
+  <header>
+    <div class="header-content">
+      <div>
+        <h1>Syntronic Labs</h1>
+        <p>LinkedIn Content Agent</p>
+      </div>
+      <button id="refreshButton" class="secondary-button">
+        Refresh
+      </button>
+    </div>
+  </header>
+  <main>
+    <section>
+      <div class="section-heading">
+        <h2>Pending Approval</h2>
+        <span id="pendingCount" class="count">
+          0
+        </span>
+      </div>
+      <div id="pendingPosts"></div>
+    </section>
+    <section>
+      <div class="section-heading">
+        <h2>Approved</h2>
+      </div>
+      <div id="approvedPosts"></div>
+    </section>
+    <section>
+      <div class="section-heading">
+        <h2>Rejected</h2>
+      </div>
+      <div id="rejectedPosts"></div>
+    </section>
+  </main>
+  <script src="/app.js"></script>
+</body>
+
+</html>

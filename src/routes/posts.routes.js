@@ -12,6 +12,8 @@ import {
   savePost,
   getPosts,
   getPostById,
+  getRecentPosts,
+  getRejectedPostById,
   approvePost,
   rejectPost,
 } from "../db/posts.repository.js";
@@ -28,8 +30,13 @@ router.post("/generate", async (req, res) => {
       });
     }
 
-    const content =
-      await generateLinkedInPost(topic);
+    const recentPosts = getRecentPosts(10);
+
+    const content = await generateLinkedInPost(
+      topic,
+      category,
+      recentPosts
+    );
 
     if (postAlreadyExists(content)) {
       return res.status(409).json({
@@ -50,6 +57,42 @@ router.post("/generate", async (req, res) => {
 
     res.status(500).json({
       error: "Unable to generate LinkedIn post.",
+    });
+  }
+});
+
+router.post("/test-draft", (req, res) => {
+  try {
+    const {
+      topic = "Test topic",
+      category = "Testing",
+      content,
+    } = req.body;
+
+    if (!content) {
+      return res.status(400).json({
+        error: "Content is required.",
+      });
+    }
+
+    if (postAlreadyExists(content)) {
+      return res.status(409).json({
+        error: "Test content duplicates an existing post.",
+      });
+    }
+
+    const post = savePost({
+      topic,
+      category,
+      content,
+    });
+
+    res.status(201).json(post);
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      error: "Unable to create test draft.",
     });
   }
 });
@@ -98,6 +141,50 @@ router.post("/:id/reject", (req, res) => {
 
     res.status(500).json({
       error: "Unable to reject post.",
+    });
+  }
+});
+
+router.post("/:id/regenerate", async (req, res) => {
+  try {
+    const rejectedPost = getRejectedPostById(req.params.id);
+
+    if (!rejectedPost) {
+      return res.status(409).json({
+        error: "Only rejected posts can be regenerated.",
+      });
+    }
+
+    const recentPosts = getRecentPosts(10);
+
+    const content = await generateLinkedInPost(
+      rejectedPost.topic,
+      rejectedPost.category,
+      recentPosts
+    );
+
+    if (postAlreadyExists(content)) {
+      return res.status(409).json({
+        error:
+          "Regenerated content duplicates an existing post.",
+      });
+    }
+
+    const newPost = savePost({
+      topic: rejectedPost.topic,
+      category: rejectedPost.category,
+      content,
+    });
+
+    res.status(201).json({
+      regenerated_from: rejectedPost.id,
+      post: newPost,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      error: "Unable to regenerate LinkedIn post.",
     });
   }
 });
